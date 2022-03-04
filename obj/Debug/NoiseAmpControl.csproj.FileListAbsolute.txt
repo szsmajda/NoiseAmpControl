@@ -1,0 +1,7 @@
+D:\NoiseAmpControl\bin\Debug\NoiseAmpControl.exe.config
+D:\NoiseAmpControl\bin\Debug\NoiseAmpControl.exe
+D:\NoiseAmpControl\bin\Debug\NoiseAmpControl.pdb
+D:\NoiseAmpControl\obj\Debug\NoiseAmpControl.csprojAssemblyReference.cache
+D:\NoiseAmpControl\obj\Debug\NoiseAmpControl.csproj.CoreCompileInputs.cache
+D:\NoiseAmpControl\obj\Debug\NoiseAmpControl.exe
+D:\NoiseAmpControl\obj\Debug\NoiseAmpControl.pdb
