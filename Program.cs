@@ -14,9 +14,8 @@ namespace NoiseAmpControl
             var voipEndPoint = new IPEndPoint(IPAddress.Parse(Constants.UdpEndPointAddress), Constants.UdpEndPointPort);
             var udpService = new UdpService(Constants.UdpClientPort, voipEndPoint);
             udpService.Send(MeasureTypes.KeepAlive);
-            while (!udpService.ReceivedString.Contains("ACK:00KEEPALIVE"));
+            while (!udpService.ReceivedString.Contains(Constants.KeepAliveAck));
 
-            Console.WriteLine("SerialPort is listening...");
             var serialPort = new SerialPortService();
             serialPort.Start();
             ReadConsoleAndSendAction(serialPort, udpService);
@@ -31,9 +30,7 @@ namespace NoiseAmpControl
                     switch (Console.ReadKey().KeyChar)
                     {
                         case 'i':
-                            Console.WriteLine("\nSerialPort is closed\n");
                             serialPort.Stop();
-                            Console.WriteLine("UdpService is sending...");
                             udpService.Send(MeasureTypes.SpeakOut);
                             break;
                         case 'x':
@@ -46,6 +43,8 @@ namespace NoiseAmpControl
                         default:
                             break;
                     }
+
+                    Console.WriteLine("----------------------------------");
                 });
             }
         }

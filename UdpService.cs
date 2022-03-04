@@ -28,6 +28,8 @@ namespace NoiseAmpControl
 
         public new void Send(MeasureTypes measureTypes)
         {
+            Console.WriteLine($"\nUdpService is sending {measureTypes}...");
+
             switch (measureTypes)
             {
                 case MeasureTypes.SpeakOut:
@@ -48,24 +50,26 @@ namespace NoiseAmpControl
             byte[] sendBytes = Encoding.UTF8.GetBytes(Constants.KeepAlive);
             base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
         }
+
         private void SpeakOut()
         {
             var sendstring = string.Format("{0}{1:D2};", Constants.VolumeFix, NoiseFilter.Vol1);
             byte[] sendBytes = Encoding.UTF8.GetBytes(sendstring);
-
             base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
 
-            while (ReceivedString.Contains(Constants.VolumeAck)) ;
-            Console.WriteLine("\nDone");
+            while (ReceivedString.Contains(Constants.VolumeAck));
+
+            Console.WriteLine($"\nReceived {Constants.VolumeAck}");
             sendBytes = Encoding.UTF8.GetBytes(Constants.AllZoneON);
             base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
-            Console.WriteLine("\nDone");
+            Console.WriteLine($"\nSent {Constants.AllZoneON}");
         }
 
         private void NoiseMeasure()
         {
             byte[] sendBytes = Encoding.UTF8.GetBytes(Constants.AllZoneOFF);
             base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
+            Console.WriteLine($"\nSent {Constants.AllZoneOFF}");
         }
     }
 }

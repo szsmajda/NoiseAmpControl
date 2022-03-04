@@ -25,6 +25,7 @@ namespace NoiseAmpControl
         {
             this.Open();
             this.DataReceived += PortDataReceived;
+            Console.WriteLine("SerialPort is listening...");
         }
 
         public void Stop()
@@ -32,6 +33,7 @@ namespace NoiseAmpControl
             this.DataReceived -= PortDataReceived;
             this.Close();
             this.Dispose();
+            Console.WriteLine("\nSerialPort is closed.");
         }
 
         private void PortDataReceived(object sender, SerialDataReceivedEventArgs e)
