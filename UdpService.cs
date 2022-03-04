@@ -8,6 +8,7 @@ namespace NoiseAmpControl
     public class UdpService : UdpClient
     {
         private IPEndPoint _iPEndPoint;
+        public string ReceivedString = string.Empty;
         public UdpService(int udpClientPort, IPEndPoint iPEndPoint) : base(udpClientPort)
         {
             _iPEndPoint = iPEndPoint;
@@ -19,20 +20,52 @@ namespace NoiseAmpControl
             if(this != null)
             {
                 Byte[] receivedUdpbytes = this.EndReceive(res, ref _iPEndPoint);
-                string receiveString = Encoding.ASCII.GetString(receivedUdpbytes);
+                ReceivedString = Encoding.ASCII.GetString(receivedUdpbytes);
             }
 
             this.BeginReceive(new AsyncCallback(UdpReceive), null);
         }
 
-        public new void Send()
+        public new void Send(MeasureTypes measureTypes)
         {
-            var sendstring = string.Format("00TC*31v{0:D2};", NoiseFilter.Vol1);
+            switch (measureTypes)
+            {
+                case MeasureTypes.SpeakOut:
+                    SpeakOut();
+                    break;
+                case MeasureTypes.NoiseMeasure:
+                    NoiseMeasure();
+                    break;
+                case MeasureTypes.KeepAlive:
+                    KeepAlive();
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void KeepAlive()
+        {
+            byte[] sendBytes = Encoding.UTF8.GetBytes(Constants.KeepAlive);
+            base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
+        }
+        private void SpeakOut()
+        {
+            var sendstring = string.Format("{0}{1:D2};", Constants.VolumeFix, NoiseFilter.Vol1);
             byte[] sendBytes = Encoding.UTF8.GetBytes(sendstring);
 
             base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
 
+            while (ReceivedString.Contains(Constants.VolumeAck)) ;
+            Console.WriteLine("\nDone");
+            sendBytes = Encoding.UTF8.GetBytes(Constants.AllZoneON);
+            base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
+            Console.WriteLine("\nDone");
+        }
 
+        private void NoiseMeasure()
+        {
+            byte[] sendBytes = Encoding.UTF8.GetBytes(Constants.AllZoneOFF);
+            base.Send(sendBytes, sendBytes.Length, Constants.UdpEndPointAddress, Constants.UdpEndPointPort);
         }
     }
 }

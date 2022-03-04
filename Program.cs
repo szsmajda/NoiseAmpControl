@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace NoiseAmpControl
 {
@@ -8,13 +9,16 @@ namespace NoiseAmpControl
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Description What to do when key is provided!");
+            Console.WriteLine("Press 'i' to run 'SpeakOut', press 'x' to run 'NoiseMeasure'!");
 
             var voipEndPoint = new IPEndPoint(IPAddress.Parse(Constants.UdpEndPointAddress), Constants.UdpEndPointPort);
             var udpService = new UdpService(Constants.UdpClientPort, voipEndPoint);
-            var serialPort = new SerialPortService(udpService);
-            serialPort.Start();
+            udpService.Send(MeasureTypes.KeepAlive);
+            while (!udpService.ReceivedString.Contains("ACK:00KEEPALIVE"));
 
+            Console.WriteLine("SerialPort is listening...");
+            var serialPort = new SerialPortService();
+            serialPort.Start();
             ReadConsoleAndSendAction(serialPort, udpService);
         }
 
@@ -24,12 +28,23 @@ namespace NoiseAmpControl
             {
                 var taskState = Task.Run(() =>
                 {
-                    if (Console.ReadKey().KeyChar == 'i')
+                    switch (Console.ReadKey().KeyChar)
                     {
-                        Console.WriteLine("\nSerialPort is closed\n");
-                        serialPort.Stop();
-                        Console.WriteLine("UdpService is sending...");
-                        udpService.Send();
+                        case 'i':
+                            Console.WriteLine("\nSerialPort is closed\n");
+                            serialPort.Stop();
+                            Console.WriteLine("UdpService is sending...");
+                            udpService.Send(MeasureTypes.SpeakOut);
+                            break;
+                        case 'x':
+                            udpService.Send(MeasureTypes.NoiseMeasure);
+                            if(!serialPort.IsOpen)
+                            {
+                                serialPort.Start();
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 });
             }

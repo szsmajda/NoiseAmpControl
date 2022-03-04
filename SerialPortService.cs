@@ -10,11 +10,9 @@ namespace NoiseAmpControl
         public int Ch2Value;
         public int Ch3Value;
         public int Ch4Value;
-        private UdpService _udpService;
 
-        public SerialPortService(UdpService udpService) : base()
+        public SerialPortService() : base()
         {
-            _udpService = udpService;
             BaudRate = Constants.BaudRate;
             PortName = Constants.PortName;
             Parity = Parity.None;
@@ -42,18 +40,9 @@ namespace NoiseAmpControl
             {
                 _receivedBytes[i] = Convert.ToByte(ReadByte());
             }
-            //NoiseStringConversion(chr_array);
-
-            ///ChannelDataWrite();
 
             NoiseFilter.StartCalculation(_receivedBytes);
-
         }
 
-        private void ChannelDataWrite()
-        {
-            Console.WriteLine(
-                $"Ch1_value:{Ch1Value,0:D}\tCh2_value:{Ch2Value,0:D}\tCh3_value:{Ch3Value,0:D}\tCh4_value:{Ch4Value,0:D}\n\r\n");
-        }
     }
 }

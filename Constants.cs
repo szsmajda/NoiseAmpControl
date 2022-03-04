@@ -22,5 +22,12 @@ namespace NoiseAmpControl
 
         public const int MaxChr = 4;
         public const int MaxBytes = 23;
+
+        public const string VolumeFix = "00TC*31v";
+        public const string VolumeAck = "ACK:00TC*31v";
+        public const string AllZoneON = "00TX8";
+        public const string AllZoneOFF = "00TX0";
+        public const string KeepAliveAck = "ACK:00KEEPALIVE";
+        public const string KeepAlive = "00KEEPALIVE";
     }
 }
