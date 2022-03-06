@@ -14,7 +14,7 @@ namespace NoiseAmpControl
             var voipEndPoint = new IPEndPoint(IPAddress.Parse(Constants.UdpEndPointAddress), Constants.UdpEndPointPort);
             var udpService = new UdpService(Constants.UdpClientPort, voipEndPoint);
             udpService.Send(MeasureTypes.KeepAlive);
-            while (!udpService.ReceivedString.Contains(Constants.KeepAliveAck));
+            while (!udpService.ReceivedString.Contains(Constants.KeepAliveAck)) ;
 
             var serialPort = new SerialPortService();
             serialPort.Start();
@@ -35,7 +35,7 @@ namespace NoiseAmpControl
                             break;
                         case 'x':
                             udpService.Send(MeasureTypes.NoiseMeasure);
-                            if(!serialPort.IsOpen)
+                            if (!serialPort.IsOpen)
                             {
                                 serialPort.Start();
                             }
@@ -48,5 +48,7 @@ namespace NoiseAmpControl
                 });
             }
         }
+
+        
     }
 }
